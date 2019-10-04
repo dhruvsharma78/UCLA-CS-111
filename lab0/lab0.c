@@ -1,3 +1,7 @@
+// NAME: Dhruv Sharma
+// EMAIL: dhruvsharma78@ucla.edu
+// ID: 605082988
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <getopt.h>
@@ -34,44 +38,6 @@ void signalHandler(int signum){
 void causeSegFault(){
   char* cp = NULL;
   *cp = 'd';
-}
-
-char* getErrorReason(int errCode, char* msg){
-  switch(errCode){
-  case EISDIR:
-    strcpy(msg, "Requested file is a directory");
-    break;
-  case ENOENT:
-    strcpy(msg, "File does not exist");
-    break;
-  case EACCES:
-    strcpy(msg, "Permission denied");
-    break;
-  case EMFILE:
-    strcpy(msg, "Too many open files");
-    break;
-  case ETXTBSY:
-    strcpy(msg, "File busy");
-    break;
-  case EFBIG:
-    strcpy(msg, "File too large");
-    break;
-  case ENOSPC:
-    strcpy(msg, "No space on disk");
-    break;
-  case EROFS:
-    strcpy(msg, "File system is read-only");
-    break;
-  case ENAMETOOLONG:
-    strcpy(msg, "File name is too long");
-    break;
-  case ELOOP:
-    strcpy(msg, "Too many symbolic links encountered");
-    break;
-  default:
-    strcpy(msg, "An unknown error has occurred");
-  }
-  return msg;
 }
 
 int main(int argc, char* argv[]){
@@ -112,7 +78,7 @@ int main(int argc, char* argv[]){
     }
     case OUTPUT:{
       close(1);
-      int fd = open(optarg, O_WRONLY | O_CREAT | O_TRUNC);
+      int fd = open(optarg, O_WRONLY | O_CREAT | O_TRUNC, 0644);
       int err = errno;
       if(fd < 0){
 	fprintf(stderr, "%s: Error: --output\n\tFile \'%s\' could not be opened/created\n", argv[0], optarg);
@@ -152,16 +118,12 @@ int main(int argc, char* argv[]){
   while((bytesRead = read(0, buf, BUF_SIZE)) > 0){
     if(write(1, buf, bytesRead) < 0){
       fprintf(stderr, "%s: Error: Write unsuccessfull\n", argv[0]);
-      char msg[140];
-      getErrorReason(errno, msg);
-      fprintf(stderr, "\t%s\n", msg);
+      fprintf(stderr, "\t%s\n", strerror(errno));
     }
   }
   if(bytesRead < 0){
     fprintf(stderr, "%s: Error: Read unsuccessfull\n", argv[0]);
-    char msg[140];
-    getErrorReason(errno, msg);
-    fprintf(stderr, "\t%s\n", msg);
+    fprintf(stderr, "\t%s\n", strerror(errno));
   }
   close(0);
   close(1);

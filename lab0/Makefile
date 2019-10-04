@@ -1,3 +1,6 @@
+# NAME: Dhruv Sharma
+# EMAIL: dhruvsharma78@ucla.edu
+# ID: 605082988
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -g
@@ -11,7 +14,7 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 TARGET = lab0
 
 _DIST = lab0-605082988.tar.gz
-_DISTSRC = $(SDIR)/*.c Makefile README backtrace.png
+_DISTSRC = $(SDIR)/*.c Makefile README backtrace.png breakpoint.png
 
 .PHONY: clean dist
 
@@ -41,6 +44,7 @@ check: $(TARGET)
 		printf "\t\t\tSUCCESS: Output file matches input file\n"; \
 	else \
 		printf "\t\t\tFAIL: Output file NOT the same as input\n"; \
+		exit -1; \
 	fi;
 	@printf "Testing support for input file argument... "
 	@ ./$(TARGET) --input=test_file 1>/dev/null 2>/dev/null; \
@@ -48,19 +52,22 @@ check: $(TARGET)
 		printf "\tSUCCESS\n"; \
 	else \
 		printf "\tFAIL: Input argument failed\n"; \
+		exit -1; \
 	fi;
 	@printf "Testing support for output file argument... "
 	@ ./$(TARGET) --output=newout < test_file 1>/dev/null 2>/dev/null; \
 	if [[ $$? -eq 0 ]]; then \
 		printf "\tSUCCESS\n"; \
 	else \
-		printf "\tFAIL: Input argument failed\n"; \
+		printf "\tFAIL: Output argument failed\n"; \
+		exit -1; \
 	fi;
 	@rm -f newout
 	@printf "Testing unrecognized argument handling... "
 	@ ./$(TARGET) --unrecognized-option 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 1 ]]; then \
 		printf "\tFAIL: Incorrect exit code\n"; \
+		exit -1; \
 	else \
 		printf "\tSUCCESS: Correct exit code\n"; \
 	fi;
@@ -69,6 +76,7 @@ check: $(TARGET)
 	@ ./$(TARGET) --input=test_file 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 2 ]]; then \
 		printf "\tFAIL: Incorrect exit code\n"; \
+		exit -1; \
 	else \
 		printf "\tSUCCESS: Correct exit code\n"; \
 	fi;
@@ -79,6 +87,7 @@ check: $(TARGET)
 	@ ./$(TARGET) --input=test_file --output=newout 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 3 ]]; then \
 		printf "\tFAIL: Incorrect exit code\n"; \
+		exit -1; \
 	else \
 		printf "\tSUCCESS: Correct exit code\n"; \
 	fi;
@@ -86,13 +95,15 @@ check: $(TARGET)
 	@ ./$(TARGET) --catch --segfault 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 4 ]]; then \
 		printf "\t\tFAIL: Incorrect exit code\n"; \
+		exit -1; \
 	else \
 		printf "\t\tSUCCESS: Correct exit code\n"; \
 	fi;
 	@printf "Testing core dump..."
-	-@ ./$(TARGET) --dump-core 1>/dev/null 2>/dev/null; \
+	-@ ./$(TARGET) --catch --dump-core --segfault < test_file 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 139 ]]; then \
 		printf "\t\tFAIL: Incorrect exit code\n"; \
+		exit -1; \
 	else \
 		printf "\t\tSUCCESS: Correct exit code\n"; \
 	fi;
@@ -101,6 +112,7 @@ check: $(TARGET)
 	@ ./$(TARGET) --input=test_file --output=newout 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 0 ]]; then \
 		printf "\t\tFAIL: File creation failed\n"; \
+		exit -1; \
 	else \
 		printf "\t\tSUCCESS: File creation succeeded\n"; \
 	fi;
@@ -108,7 +120,10 @@ check: $(TARGET)
 	@ ./$(TARGET) --input=test_file1827382738173 --output=newout 1>/dev/null 2>/dev/null; \
 	if [[ $$? -ne 2 ]]; then \
 		printf "\t\tFAIL: Incorrect exit code\n"; \
+		exit -1; \
 	else \
 		printf "\t\tSUCCESS: Correct exit code\n"; \
 	fi;
 	@rm -f test_file out newout
+	@printf "\nSUCCESS: All smoke tests pass...\n"
+	@exit 0

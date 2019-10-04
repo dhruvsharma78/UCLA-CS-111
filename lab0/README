@@ -1,3 +1,39 @@
 NAME: Dhruv Sharma
 EMAIL: dhruvsharma78@ucla.edu
 ID: 605082988
+
+Description of files:
+
+    * lab0.c         - The source file that contains all subroutines and the main routine.
+    * Makefile       - The makefile with build targets to:
+      	       	             * build the executable
+		             * create the distributable tarball
+		             * clean the build directory after tarball creation / compilation
+
+    * backtrace.png  - Shows the stacktrace after a segfault as captured in gdb
+    * breakpoint.png - Shows the breakpoint and variable inspection
+    * README         - this file
+
+Smoke Test Cases:
+
+    These are the simple smoke-test cases I checked for in my Makefile check target:
+    	  * Basic funtionality - Checks if output and input are same
+	  * Support for input file argument - Checks if program recognizes and supports it
+	  * Support for output file argument - Checks if program recognizes and supports it
+	  * Unrecognized arguments - Checks if program exists appropriately
+	  * Read permission error - Checks if program exists appropriately on read permission error
+	  * Write permission error - Checks if program exists appropriately on write permission error
+	  * Catching segmentation faults - Checks if program catches fault and exists appropriately
+	  * Core dump - Checks if --dump-core option has intended effect
+	  * Output file creation - Check if output file can be created if doesn't exist
+	  * No input file - Check if program exists appropriately if can't find input file
+
+Research Done for Project:
+
+    * For this project, I first read all the man pages suggested on the course website
+    * For the most part, building the most basic version of the project was easy, but became harder when
+      I began adding support for option parsing
+      It took quite a while to understand how the API worked but I was able to follow along the examples
+      in the 'notes' section of the man page
+    * I didn't quite understand what was meant by dumping cores. I was able to understand through the TA's
+      comments on the piazza post (https://piazza.com/class/k12d141vub1ha?cid=12)
