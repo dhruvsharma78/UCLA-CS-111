@@ -55,8 +55,10 @@ check: $(TARGET)
 	@chmod u=r testf_1
 	@chmod u=w testf_2
 	@chmod u=rw testf_3
+	@sleep 0.2
 	@./$(TARGET) --rdonly testf_1 --wronly testf_2 --wronly testf_3 \
 	--rdonly testf_1 --wronly testf_2 1>/dev/null 2>&1; \
+	sleep 1; \
 	if [ $$? == 0 ]; then \
 		printf "\t\tSUCCESS\n"; \
 	else \
@@ -69,10 +71,12 @@ check: $(TARGET)
 	@chmod u-r testf_1
 	@chmod u-w testf_2
 	@touch t1out t1err t2out t2err
+	@sleep 0.3
 	@./$(TARGET) --rdonly testf_1 1>t1out 2>t1err; \
 	RESONE=$$?; \
 	./$(TARGET) --wronly testf_2 1>t2out 2>t2err; \
 	RESTWO=$$?; \
+	sleep 1; \
 	if [ $$RESONE == 1 ] && [ ! -s t1out ] && [ -s t1err ] \
 	&& [ $$RESTWO == 1 ] && [ ! -s t2out ] && [ -s t2err ]; then \
 		printf "\t\tSUCCESS\n"; \
@@ -88,10 +92,12 @@ check: $(TARGET)
 	@chmod u=w testf_2
 	@echo "test stringhiodr s oisf iosijf sijrf" > testf_1
 	@chmod u=r testf_1
+	@sleep 0.3
 	@./$(TARGET) --rdonly testf_1 --wronly testf_2 --command 0 1 1 cat; \
 	EC=$$?; \
 	chmod u=r testf_2; \
 	cmp -s testf_1 testf_2; \
+	sleep 1; \
 	if [ $$? == 0 ] && [ $$EC == 0 ]; then \
 		printf "\tSUCCESS\n"; \
 	else \
