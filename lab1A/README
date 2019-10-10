@@ -1,3 +1,46 @@
 NAME: Dhruv Sharma
 EMAIL: dhruvsharma78@ucla.edu
 ID: 605082988
+
+Files:
+
+    * simpsh.c        - Contains main subroutine for SIMPleton SHell 
+    * command.h	      - Interface for operations related to single commands
+    * command.c	      - Implementation of interface described in command.h
+    * commands.h      - Interface for operations related to a collection of commands
+    * commands.c      - Implementation of interface described in commands.h
+    * file.h	      - Interface for operations related to file opening/closing
+    * file.c	      - Implementation of interface described in file.c
+    * optionparsing.h - Constants and macros needed for parsing options
+    * optionparsing.c - Implementation of flag handling for file I/O option parsing
+    * README	      - This file
+    * Makefile	      - The makefile for this project with build targets to:
+      		          * Build the executable
+			  * Create distribution tarball
+			  * Clean the build/source directory
+			  * Run basic testing on built executable
+
+Test Cases:
+
+    The Makefile runs the following very basic tests:
+    	* Handling of bogus/unsupported options
+	* File opening on valid arguments
+	* File opening error handling on invalid arguments
+	* Functionality of running basic commands
+
+Research:
+	
+    * Handling option parsing in C with multiple arguments
+    * Efficiently parsing and storing flags for file I/O
+    * Process forking and execvp()
+
+Extra Features:
+
+    * I implemented data structures to keep hold of all commands the user wants to run.
+      This is of no use right now, but in the future, for Lab 1B&C, it will help me keep
+      track of all processes.
+    * I also implemented a custom file table. I did this because file descriptors in
+      this shell work a little differently. For example, even if the 4th open call fails,
+      file descriptor 3 will no longer be used for any future file. Using my custom file
+      table, I can easily keep track of the mappings of the simpsh fd's to the real OS fd's
+      and also easily set and get their status values (whether they failed or not).
