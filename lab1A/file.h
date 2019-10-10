@@ -12,6 +12,8 @@ typedef struct{
 } simpsh_filetable_t;
 
 simpsh_filetable_t* SIMPSH_FILETABLE_T_INIT();
+void SIMPSH_FILETABLE_T_DESTROY();
+
 int addFile(simpsh_filetable_t*, int, int);
 int findFile(simpsh_filetable_t*, int, int*);
 void closeStandardFiles();

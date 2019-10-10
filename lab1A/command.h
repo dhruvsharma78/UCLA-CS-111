@@ -12,6 +12,7 @@ typedef struct {
 } simpsh_command_t;
 
 simpsh_command_t* SIMPSH_COMMAND_T_INIT();
+void SIMPSH_COMMAND_T_DESTROY(simpsh_command_t*);
 void addArgument(simpsh_command_t* cmd, char* arg);
 
 #endif

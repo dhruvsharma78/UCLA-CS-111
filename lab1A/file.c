@@ -11,6 +11,12 @@ simpsh_filetable_t* SIMPSH_FILETABLE_T_INIT(){
   return ft;
 }
 
+void SIMPSH_FILETABLE_T_DESTROY(simpsh_filetable_t* ft){
+  free(ft->files);
+  free(ft);
+  ft = NULL;
+}
+
 int addFile(simpsh_filetable_t* ft, int fd, int status){
   ft->files = (simpsh_file_t*) realloc(ft->files, sizeof(simpsh_file_t) * (ft->num+2));
   if(ft->files == NULL) return 1;

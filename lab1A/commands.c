@@ -11,6 +11,16 @@ simpsh_commands_t* SIMPSH_COMMANDS_T_INIT(){
   return x;
 }
 
+void SIMPSH_COMMANDS_T_DESTROY(simpsh_commands_t* cmds){
+  int i;
+  for(i=0; i<cmds->num; ++i){
+    SIMPSH_COMMAND_T_DESTROY(cmds->commandList[i]);
+  }
+  free(cmds->commandList);
+  free(cmds);
+  cmds = NULL;
+}
+
 void addCommand(simpsh_commands_t* cmds, simpsh_command_t* x){
   cmds->commandList = (simpsh_command_t**) realloc(cmds->commandList, sizeof(simpsh_command_t*) * (cmds->num+2));
   cmds->commandList[cmds->num++] = x;
