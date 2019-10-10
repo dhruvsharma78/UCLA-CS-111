@@ -103,7 +103,7 @@ int main(int argc, char* argv[]){
 	if(arg_ind >= 0 && arg_ind <= 2){
 	  newCmd->fdTable[arg_ind] = atoi(argv[index]);
 	}else if(arg_ind >= 3){
-	  addArgument(newCmd, strdup(argv[index]));
+	  addArgument(newCmd, argv[index]);
 	  if(arg_ind == 3) newCmd->processName = strdup(argv[index]);
 	}
 	++arg_ind;
@@ -145,7 +145,7 @@ int main(int argc, char* argv[]){
       }else{
 	cmd->processID = p;
       }
-      
+      break;
     }
     case SIMPSH_O_CLOSE:
       break;
@@ -177,5 +177,10 @@ int main(int argc, char* argv[]){
       }
     }
   }
+
+  // Free memory
+  SIMPSH_COMMANDS_T_DESTROY(cmds);
+  SIMPSH_FILETABLE_T_DESTROY(ft);
+  
   exit(maxError);
 }
