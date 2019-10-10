@@ -12,8 +12,9 @@ simpsh_commands_t* SIMPSH_COMMANDS_T_INIT(){
 }
 
 void addCommand(simpsh_commands_t* cmds, simpsh_command_t* x){
-  cmds->commandList = (simpsh_command_t**) realloc(cmds->commandList, sizeof(simpsh_command_t**) * (cmds->num+1));
+  cmds->commandList = (simpsh_command_t**) realloc(cmds->commandList, sizeof(simpsh_command_t*) * (cmds->num+2));
   cmds->commandList[cmds->num++] = x;
+  cmds->commandList[cmds->num] = NULL;
 }
 
 char* getCommandExitString(simpsh_commands_t* cmds, pid_t pid, char* str){
