@@ -57,22 +57,22 @@ int main(int argc, char* argv[]){
       int err = errno;
       int status = 1;
       if(fd < 0){
-	status = 0;
-	char em[10];
-	switch(c){
-	case SIMPSH_O_RD_ONLY:
-	  strcpy(em, "--rdonly");
-	  break;
-	case SIMPSH_O_RD_WR:
-	  strcpy(em, "--rdwr");
-	  break;
-	case SIMPSH_O_WR_ONLY:
-	  strcpy(em, "--wronly");
-	  break;
-	}
-	fprintf(stderr, "%s: ERROR: %s\n\tFile \'%s\' could not be opened/created\n", argv[0], em, optarg);
-	fprintf(stderr, "\t%s\n", strerror(err));
-	maxError = 1;
+        status = 0;
+        char em[10];
+        switch(c){
+        case SIMPSH_O_RD_ONLY:
+          strcpy(em, "--rdonly");
+          break;
+        case SIMPSH_O_RD_WR:
+          strcpy(em, "--rdwr");
+          break;
+        case SIMPSH_O_WR_ONLY:
+          strcpy(em, "--wronly");
+          break;
+        }
+        fprintf(stderr, "%s: ERROR: %s\n\tFile \'%s\' could not be opened/created\n", argv[0], em, optarg);
+        fprintf(stderr, "\t%s\n", strerror(err));
+        maxError = 1;
       }
       addFile(ft, fd, status);
       clearFlags(&file_flags);
@@ -83,9 +83,9 @@ int main(int argc, char* argv[]){
       int temp_fd[2];
       int status = 1;
       if(pipe(temp_fd) == -1){
-	status = 0;
-	fprintf(stderr, "%s: ERROR: Pipe creation failiure\n", argv[0]);
-	fprintf(stderr, "\t%s\n", strerror(errno));
+        status = 0;
+        fprintf(stderr, "%s: ERROR: Pipe creation failiure\n", argv[0]);
+        fprintf(stderr, "\t%s\n", strerror(errno));
       }
       addFile(ft, temp_fd[0], status);
       addFile(ft, temp_fd[1], status);
@@ -96,18 +96,18 @@ int main(int argc, char* argv[]){
       simpsh_command_t* newCmd = SIMPSH_COMMAND_T_INIT();
       int arg_ind = 0;
       while(index < argc){
-	if(argv[index][0] == '-' && argv[index][1] == '-'){
-	  break;
-	}
-	if(verbose) fprintf(stdout, "%s ", argv[index]);
-	if(arg_ind >= 0 && arg_ind <= 2){
-	  newCmd->fdTable[arg_ind] = atoi(argv[index]);
-	}else if(arg_ind >= 3){
-	  addArgument(newCmd, argv[index]);
-	  if(arg_ind == 3) newCmd->processName = strdup(argv[index]);
-	}
-	++arg_ind;
-	++index;
+        if(argv[index][0] == '-' && argv[index][1] == '-'){
+          break;
+	      }
+        if(verbose) fprintf(stdout, "%s ", argv[index]);
+        if(arg_ind >= 0 && arg_ind <= 2){
+          newCmd->fdTable[arg_ind] = atoi(argv[index]);
+        }else if(arg_ind >= 3){
+          addArgument(newCmd, argv[index]);
+          if(arg_ind == 3) newCmd->processName = strdup(argv[index]);
+        }
+        ++arg_ind;
+        ++index;
       }
       if(verbose) fprintf(stdout, "\n");
       addCommand(cmds, newCmd);
@@ -115,35 +115,34 @@ int main(int argc, char* argv[]){
       int i;
       int filesExist = 1;
       for(i=0; i<3; i++){
-	int active;
-	int found = findFile(ft, cmd->fdTable[i], &active);
-	if(!found || !active){
-	  filesExist = 0;
-	  break;
-	}
+        int active;
+        int found = findFile(ft, cmd->fdTable[i], &active);
+        if(!found || !active){
+          filesExist = 0;
+          break;
+	      }
       }
       if(!filesExist){
-	maxError = 1;
-	fprintf(stderr, "%s: ERROR: Incorrect file descriptor numbers...\n", argv[0]);
-	continue;
+        maxError = 1;
+        fprintf(stderr, "%s: ERROR: Incorrect file descriptor numbers...\n", argv[0]);
+        continue;
       }
       pid_t p = fork();
       int err;
       if(p < 0){
-	fprintf(stderr, "%s: ERROR: forking unsuccessful\n", argv[0]);
-	_exit(1);
+        fprintf(stderr, "%s: ERROR: forking unsuccessful\n", argv[0]);
+        _exit(1);
       }else if(p == 0){
-	int err_fd = dup(STDERR_FILENO);
-	closeStandardFiles();
-	if((err = replaceFiles(ft, cmd->fdTable) != 0 )){
-	  if(err == 1) dprintf(err_fd, "%s: ERROR: I/O Redirection failed\n", argv[0]);
-	  else dprintf(err_fd, "%s: ERROR: Unknown error occured\n", argv[0]);
-	  _exit(1);
-	}
-	execvp(cmd->processName, cmd->arguments);
-	_exit(2);
+        int err_fd = dup(STDERR_FILENO);
+	      if((err = replaceFiles(ft, cmd->fdTable) != 0 )){
+          if(err == 1) dprintf(err_fd, "%s: ERROR: I/O Redirection failed\n", argv[0]);
+          else dprintf(err_fd, "%s: ERROR: Unknown error occured\n", argv[0]);
+	        _exit(1);
+	      }
+        execvp(cmd->processName, cmd->arguments);
+        _exit(2);
       }else{
-	cmd->processID = p;
+	      cmd->processID = p;
       }
       break;
     }
@@ -165,18 +164,20 @@ int main(int argc, char* argv[]){
       int status;
       pid_t finished = wait(&status);
       if(finished == -1){
-	if(errno == ECHILD) break;
-	else fprintf(stderr, "%s: ERROR. An error occured while waiting for child processes to finish\n\t%s", argv[0], strerror(errno));
+        if(errno == ECHILD) break;
+        else fprintf(stderr, "%s: ERROR. An error occured while waiting for child processes to finish\n\t%s", argv[0], strerror(errno));
       }else if(finished != 0){
-	char exitString[BUF_SIZE];
-	exitString[0] = 0;
-	status = WEXITSTATUS(status);
-	fprintf(stdout, "exit %d %s\n", status, getCommandExitString(cmds, finished, exitString));
-	maxError = status > maxError ? status : maxError;
-	exitString[0] = 0;
+        char exitString[BUF_SIZE];
+        exitString[0] = 0;
+        status = WEXITSTATUS(status);
+        fprintf(stdout, "exit %d %s\n", status, getCommandExitString(cmds, finished, exitString));
+        maxError = status > maxError ? status : maxError;
+        exitString[0] = 0;
       }
     }
   }
+
+  closeAllFiles(ft);
 
   // Free memory
   SIMPSH_COMMANDS_T_DESTROY(cmds);
