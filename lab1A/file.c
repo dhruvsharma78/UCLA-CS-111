@@ -35,14 +35,18 @@ int findFile(simpsh_filetable_t* ft, int fd, int* status){
   }
 }
 
-void closeStandardFiles(){
-  int i=0;
-  for(;i<3;i++){
-    int err = close(i);
-    if(err<0){
-      exit(errno);
+int closeAllFiles(simpsh_filetable_t* ft){
+  int err;
+  int i;
+  for(i=0; i<ft->num; ++i){
+    if(ft->files[i].status){
+      int err_c = close(ft->files[i].fd);
+      if(err_c<0){
+        err = 1;
+      }
     }
   }
+  return err;
 }
 
 int replaceFiles(simpsh_filetable_t* ft, int* newFiles){

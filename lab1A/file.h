@@ -15,8 +15,8 @@ simpsh_filetable_t* SIMPSH_FILETABLE_T_INIT();
 void SIMPSH_FILETABLE_T_DESTROY();
 
 int addFile(simpsh_filetable_t*, int, int);
+int closeAllFiles(simpsh_filetable_t*);
 int findFile(simpsh_filetable_t*, int, int*);
-void closeStandardFiles();
 int replaceFiles(simpsh_filetable_t*, int*);
 
 #endif
