@@ -22,6 +22,9 @@ _DISTSRC = $(SDIR)/*.c $(SDIR)/*.h Makefile README
 
 default: $(TARGET)
 
+debug: CFLAGS +=  -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=bounds
+debug: default
+
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
