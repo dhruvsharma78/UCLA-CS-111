@@ -1,3 +1,7 @@
+// NAME: Dhruv Sharma
+// EMAIL: dhruvsharma78@ucla.edu
+// ID: 605082988
+
 #include "command.h"
 #include "commands.h"
 #include <stdlib.h>
@@ -28,10 +32,11 @@ void addCommand(simpsh_commands_t* cmds, simpsh_command_t* x){
 }
 
 char* getCommandExitString(simpsh_commands_t* cmds, pid_t pid, char* str){
-  int i=0;
-  for(;i<cmds->num;++i){
+  int i;
+  int j;
+  for(i=0;i<cmds->num;++i){
     if(cmds->commandList[i]->processID == pid){
-      for(int j=0; j<cmds->commandList[i]->numArguments; ++j){
+      for(j=0; j<cmds->commandList[i]->numArguments; ++j){
 	str = strcat(str, cmds->commandList[i]->arguments[j]);
 	str = strcat(str, " ");
       }

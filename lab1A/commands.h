@@ -1,3 +1,7 @@
+// NAME: Dhruv Sharma
+// EMAIL: dhruvsharma78@ucla.edu
+// ID: 605082988
+
 #ifndef COMMANDS_H
 #define COMMANDS_H
 

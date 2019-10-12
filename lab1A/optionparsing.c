@@ -1,3 +1,7 @@
+// NAME: Dhruv Sharma
+// EMAIL: dhruvsharma78@ucla.edu
+// ID: 605082988
+
 #include "optionparsing.h"
 #include <getopt.h>
 #include <fcntl.h>

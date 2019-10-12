@@ -1,3 +1,7 @@
+// NAME: Dhruv Sharma
+// EMAIL: dhruvsharma78@ucla.edu
+// ID: 605082988
+
 #ifndef OPTIONPARSING_H
 #define OPTIONPARSING_H
 
