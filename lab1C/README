@@ -1,0 +1,78 @@
+NAME: Dhruv Sharma
+EMAIL: dhruvsharma78@ucla.edu
+ID: 605082988
+
+
+************************************************************************************************
+*		              	            CHANGELOG				               *	
+************************************************************************************************
+
+    * --command missing arguments. simpsh didn't handle this error. Furthermore, it would cause
+      issues with the next few commands. Bug has been fixed.
+
+    * Child Process Waiting. In Lab1A, simpsh used --wait as a flag: it would wait for all
+      subcommands to finish if --wait was ever specified. In this update, --wait only waits for
+      all previously specified commands; commands specified after a particular --wait are not
+      affected by that particular --wait.
+
+    * Signal Handling. simpsh had a potentially fatal bug where fprintf was used in
+      simpshSignalHandler. This function was not async signal safe. The functino has been changed
+      to use write (2) instead. For converting integers to strings, a new async signal safe
+      subprocess has been defined in signal.h
+
+    * Buffer Flushing. simpsh had another bug where buffers were not flushed manually. This was
+      fine as long as no signals interupted execution. This has been fixed by adding flushes
+      after each buffered print.
+
+    * Abort. simpsh used a memory access violation to implement --abort. This was fine in most
+      cases. However, if you tried --ignore 11 --abort, the shell would not ignore the signal.
+
+    * Exit Status. simpsh didn't handle exit codes properly when a subcommand exited with
+      a signal. This has been fixed.
+      
+************************************************************************************************
+
+Known Bugs:
+
+    * In forked child processes, dprintf is used to print to a dup'd descriptor pointing to
+      stderr. This print is not buffered and may potentially cause issues.
+
+Files:
+
+    * simpsh.c        - Contains main subroutine for SIMPleton SHell 
+    * command.h	      - Interface for operations related to single commands
+    * command.c	      - Implementation of interface described in command.h
+    * commands.h      - Interface for operations related to a collection of commands
+    * commands.c      - Implementation of interface described in commands.h
+    * file.h	      - Interface for operations related to file opening/closing
+    * file.c	      - Implementation of interface described in file.c
+    * optionparsing.h - Constants and macros needed for parsing options
+    * optionparsing.c - Implementation of flag handling for file I/O option parsing
+    * signal.h	      - Interface for custom signal handlers
+    * signal.c	      - Implementation of custom signal handling
+    * README	      - This file
+    * Makefile	      - The makefile for this project with build targets to:
+      		          * Build the executable
+			  * Create distribution tarball
+			  * Clean the build/source directory
+			  * Run basic testing on built executable
+
+Smoke Tests:
+
+    The Makefile runs the following very basic tests:
+    	* Handling of bogus/unsupported options
+	* File opening on valid arguments
+	* File opening error handling on invalid arguments
+	* Functionality of running basic commands
+	* Pipe functionality
+	* Wait functionality
+
+Research:
+	
+    * Handling option parsing in C with multiple arguments
+    * Efficiently parsing and storing flags for file I/O
+    * Process forking and execvp()
+    * Handling signals, raising signals
+    * Waiting for child processes
+
+
