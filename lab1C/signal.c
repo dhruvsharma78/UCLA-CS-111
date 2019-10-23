@@ -9,7 +9,7 @@
 
 void simpshSignalHandler(int signum){
   char num[4];
-  num[4] = 0;
+  num[3] = 0;
   int size;
   int done;
   int written;
