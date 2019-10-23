@@ -3,12 +3,12 @@
 # ID: 605082988
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -O2
 
 SDIR = ./
 
 ODIR = $(SDIR)/obj
-_OBJ = file.o command.o commands.o optionparsing.o signal.o simpsh.o
+_OBJ = profile.o file.o command.o commands.o optionparsing.o signal.o simpsh.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 TARGET = simpsh
@@ -22,7 +22,7 @@ _DISTSRC = $(SDIR)/*.c $(SDIR)/*.h Makefile README
 
 default: $(TARGET)
 
-debug: CFLAGS +=  -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=bounds
+debug: CFLAGS +=  -O0 -g -fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -fsanitize=bounds
 debug: default
 
 $(TARGET): $(OBJ)
