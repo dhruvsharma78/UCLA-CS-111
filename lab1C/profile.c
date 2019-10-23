@@ -17,26 +17,26 @@ int getCurrentTime(int who, simpsh_timeinfo_t* ti){
 int getElapsedTime(int who, simpsh_timeinfo_t ti_start, simpsh_timeinfo_t* elapsedTime){
   simpsh_timeinfo_t ti_end;
   if(getCurrentTime(who, &ti_end) < 0) return -1;
-  elapsedTime->t_user = getTimeDiff(ti_start.t_user, ti_end.t_user);
-  elapsedTime->t_system = getTimeDiff(ti_start.t_system, ti_end.t_system);
+  elapsedTime->t_user = getTimeDiff(ti_end.t_user, ti_start.t_user);
+  elapsedTime->t_system = getTimeDiff(ti_end.t_system, ti_start.t_system);
   return 0;
 }
 
-struct timeval getTimeDiff(struct timeval ti_start, struct timeval ti_end){
+struct timeval getTimeDiff(struct timeval t1, struct timeval t2){
   struct timeval diff;
-  if(ti_start.tv_usec < ti_end.tv_usec) {
-    int nsec = (ti_end.tv_usec - ti_start.tv_usec) / 1000000 + 1;
-    ti_end.tv_usec -= 1000000 * nsec;
-    ti_end.tv_sec += nsec;
+  if(t1.tv_usec < t2.tv_usec) {
+    int nsec = (t2.tv_usec - t1.tv_usec) / 1000000 + 1;
+    t2.tv_usec -= 1000000 * nsec;
+    t2.tv_sec += nsec;
   }
-  if(ti_start.tv_usec - ti_end.tv_usec > 1000000) {
-    int nsec = (ti_start.tv_usec - ti_end.tv_usec) / 1000000;
-    ti_end.tv_usec += 1000000 * nsec;
-    ti_end.tv_sec -= nsec;
+  if(t1.tv_usec - t2.tv_usec > 1000000) {
+    int nsec = (t1.tv_usec - t2.tv_usec) / 1000000;
+    t2.tv_usec += 1000000 * nsec;
+    t2.tv_sec -= nsec;
   }
   
-  diff.tv_sec = ti_start.tv_sec - ti_end.tv_sec;
-  diff.tv_usec = ti_start.tv_usec - ti_end.tv_usec;
+  diff.tv_sec = t1.tv_sec - t2.tv_sec;
+  diff.tv_usec = t1.tv_usec - t2.tv_usec;
 
   return diff;
 }
