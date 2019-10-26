@@ -16,7 +16,7 @@ TARGET = simpsh
 UID = 605082988
 
 _DIST = lab1-$(UID).tar.gz
-_DISTSRC = $(SDIR)/*.c $(SDIR)/*.h Makefile README
+_DISTSRC = $(SDIR)/*.c $(SDIR)/*.h Makefile README report.pdf
 
 .PHONY: clean dist
 
