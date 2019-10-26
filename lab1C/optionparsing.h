@@ -47,6 +47,9 @@
 #define SIMPSH_O_DEFAULT 76
 #define SIMPSH_O_PAUSE 77
 
+// Debugging Options
+#define SIMPSH_O_DEBUG_SHELL_PROFILE 111
+
 extern struct option simpsh_long_options[];
 
 void updateFlags(int* field, int code);

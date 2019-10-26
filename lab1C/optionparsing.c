@@ -33,6 +33,7 @@ struct option simpsh_long_options[] = {
     {"ignore"   , required_argument, 0, SIMPSH_O_IGNORE},
     {"default"  , required_argument, 0, SIMPSH_O_DEFAULT},
     {"pause"    , no_argument      , 0, SIMPSH_O_PAUSE},
+    {"debug-shell-profile", no_argument, 0, SIMPSH_O_DEBUG_SHELL_PROFILE},
     {0, 0, 0, 0}
 };
 
