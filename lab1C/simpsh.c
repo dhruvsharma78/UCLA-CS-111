@@ -18,31 +18,54 @@
 #include "optionparsing.h"
 #include "file.h"
 #include "signal.h"
+#include "profile.h"
 
 #define BUF_SIZE 2048
 
 int main(int argc, char* argv[]){
+  
   simpsh_commands_t* cmds = SIMPSH_COMMANDS_T_INIT();
   simpsh_filetable_t* ft = SIMPSH_FILETABLE_T_INIT();
+  simpsh_timeinfo_t opt_proc_ti;
+  simpsh_timeinfo_t children_ti;
+  simpsh_timeinfo_t shell_ti;
+  
   int file_flags = 0;
   int c;
   int verbose = 0;
   int profileFlag = 0;
+  int profileind;
   int maxError = 0;
   int maxSignal = 0;
   int terminatedWithSignal = 0;
+  int waitFlag = 0;
+  int debugShellProfile = 0;
   opterr = 0;
+  
   while(1){
+    if(profileFlag){
+      if(getCurrentTime(RUSAGE_SELF, &opt_proc_ti) < 0){
+	fprintf(stderr, "%s: ERROR: There was an error getting process times...", argv[0]);
+	exit(1);
+      }
+    }
     c = getopt_long(argc, argv, "", simpsh_long_options, NULL);
+    profileind = optind - 2;
     if(c == -1) break;
     switch(c){
+    case SIMPSH_O_DEBUG_SHELL_PROFILE:
+      debugShellProfile = 1;
+      break;
     case SIMPSH_O_PROFILE:
-      profileFlag = 1;
-      if(profileFlag){
-	printf("profile here...");
+      profileind = optind - 1;
+      if(verbose){
+	fprintf(stdout, "%s\n", argv[optind - 1]);
+	fflush(stdout);
       }
+      profileFlag = 1;
       break;
     case SIMPSH_O_VERBOSE:
+      profileind = optind - 1;
       verbose = 1;
       if(verbose){
 	fprintf(stdout, "%s\n", argv[optind - 1]);
@@ -60,6 +83,7 @@ int main(int argc, char* argv[]){
     case SIMPSH_O_RSYNC:
     case SIMPSH_O_SYNC:
     case SIMPSH_O_TRUNC:
+      profileind = optind - 1;
       if(verbose){
 	fprintf(stdout, "%s\n", argv[optind - 1]);
 	fflush(stdout);
@@ -102,6 +126,7 @@ int main(int argc, char* argv[]){
       break;
     }
     case SIMPSH_O_PIPE:
+      profileind = optind - 1;
       if(verbose){
 	fprintf(stdout, "%s\n", argv[optind - 1]);
 	fflush(stdout);
@@ -206,6 +231,8 @@ int main(int argc, char* argv[]){
       }
       break;
     case SIMPSH_O_WAIT:
+      waitFlag = 1;
+      profileind = optind - 1;
       if(verbose){
 	fprintf(stdout, "%s\n", argv[optind - 1]);
 	fflush(stdout);
@@ -275,11 +302,17 @@ int main(int argc, char* argv[]){
       signal(atoi(optarg), SIG_IGN);
       break;
     case SIMPSH_O_PAUSE:
+      profileind = optind - 1;
+      if(verbose){
+	fprintf(stdout, "%s\n", argv[optind - 1]);
+	fflush(stdout);
+      }
       pause();
       break;
     case SIMPSH_O_ABORT:{
+            profileind = optind - 1;
       if(verbose){
-	fprintf(stdout, "--abort\n");
+	fprintf(stdout, "%s\n", argv[optind - 1]);
 	fflush(stdout);
       }
       fflush(stdout);
@@ -288,16 +321,56 @@ int main(int argc, char* argv[]){
       break;
     }
     case '?':
+      profileind = -1;
       if(argv[optind-1][0] == '-' && argv[optind-1][1] != '-') break;
       fprintf(stderr, "%s: ERROR: Unrecognized option \'%s\'...\n", argv[0], argv[optind-1]);
       fflush(stderr);
       maxError = 1;
       break;
     }
+    // Option Processing Time Profiling
+    if(profileFlag && c != SIMPSH_O_PROFILE){
+      simpsh_timeinfo_t elapsed;
+      getElapsedTime(RUSAGE_SELF, opt_proc_ti, &elapsed);
+      double system_t = elapsed.t_system.tv_sec + (elapsed.t_system.tv_usec/1000000.0);
+      double user_t = elapsed.t_user.tv_sec + (elapsed.t_user.tv_usec/1000000.0);
+      char* optstr = (profileind < 0) ? "Unknown Argument" : argv[profileind];
+      if(verbose){
+	fprintf(stdout, "\t Option Processing Time - User: %0.6fs ", user_t);
+	fprintf(stdout, "System: %0.6fs\n", system_t);
+      }else{
+	fprintf(stdout, "%s Processing Time - User: %0.6fs ", optstr, user_t);
+	fprintf(stdout, "System: %0.6fs\n", system_t);
+      }
+    }
+  }
+
+  if(profileFlag && waitFlag){
+    if(getCurrentTime(RUSAGE_CHILDREN, &children_ti) < 0){
+      fprintf(stderr, "%s: ERROR: There was an error getting process times...", argv[0]);
+      exit(1);
+    }else{
+      double system_t = children_ti.t_system.tv_sec + (children_ti.t_system.tv_usec/1000000.0);
+      double user_t = children_ti.t_user.tv_sec + (children_ti.t_user.tv_usec/1000000.0);
+      fprintf(stdout, "Total Time For All Waited For Child Processes:   User: %0.6fs ", user_t);
+      fprintf(stdout, "System: %0.6fs\n", system_t);
+    }
   }
 
   closeAllFiles(ft);
 
+  if(debugShellProfile){
+    if(getCurrentTime(RUSAGE_SELF, &shell_ti) < 0){
+      fprintf(stderr, "%s: ERROR: There was an error getting process times...", argv[0]);
+      exit(1);
+    }else{
+      double system_t = shell_ti.t_system.tv_sec + (shell_ti.t_system.tv_usec/1000000.0);
+      double user_t = shell_ti.t_user.tv_sec + (shell_ti.t_user.tv_usec/1000000.0);
+      fprintf(stdout, "\n\nTotal Shell Time:   User: %0.6fs ", user_t);
+      fprintf(stdout, "System: %0.6fs\n\n", system_t);
+    }
+  }
+    
   // Free memory
   SIMPSH_COMMANDS_T_DESTROY(cmds);
   SIMPSH_FILETABLE_T_DESTROY(ft);
