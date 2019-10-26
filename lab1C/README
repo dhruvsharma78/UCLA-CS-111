@@ -7,35 +7,26 @@ ID: 605082988
 *		              	            CHANGELOG				               *	
 ************************************************************************************************
 
-    * --command missing arguments. simpsh didn't handle this error. Furthermore, it would cause
-      issues with the next few commands. Bug has been fixed.
+    * --profile has been implemented. This outputs the time taken to process each option and
+      also the total time spent by wait-ed for child processes.
 
-    * Child Process Waiting. In Lab1A, simpsh used --wait as a flag: it would wait for all
-      subcommands to finish if --wait was ever specified. In this update, --wait only waits for
-      all previously specified commands; commands specified after a particular --wait are not
-      affected by that particular --wait.
+    * A new option --debug-shell-profile was added to display total shell time. This helps
+      in understanding how fast simpsh is compared to other shells.
 
-    * Signal Handling. simpsh had a potentially fatal bug where fprintf was used in
-      simpshSignalHandler. This function was not async signal safe. The functino has been changed
-      to use write (2) instead. For converting integers to strings, a new async signal safe
-      subprocess has been defined in signal.h
+    * Fixed a bug in signal.c that had an illegal array index assignment.
 
-    * Buffer Flushing. simpsh had another bug where buffers were not flushed manually. This was
-      fine as long as no signals interupted execution. This has been fixed by adding flushes
-      after each buffered print.
+    * Added the optimization flag to gcc compile commands. Also moved the debugging flag to
+      the debug target
 
-    * Abort. simpsh used a memory access violation to implement --abort. This was fine in most
-      cases. However, if you tried --ignore 11 --abort, the shell would not ignore the signal.
-
-    * Exit Status. simpsh didn't handle exit codes properly when a subcommand exited with
-      a signal. This has been fixed.
+    * Created report on performance reports of simpsh compared to bash and dash on some basic
+      cases.
       
 ************************************************************************************************
 
 Known Bugs:
 
     * In forked child processes, dprintf is used to print to a dup'd descriptor pointing to
-      stderr. This print is not buffered and may potentially cause issues.
+      stderr. This print is not flushed and may potentially cause issues.
 
 Files:
 
@@ -50,7 +41,10 @@ Files:
     * optionparsing.c - Implementation of flag handling for file I/O option parsing
     * signal.h	      - Interface for custom signal handlers
     * signal.c	      - Implementation of custom signal handling
+    * profile.h	      - Interface for profiling simpsh performance
+    * profile.c	      - Implementation of profile interface
     * README	      - This file
+    * report.pdf      - A comparison of simpsh performance with bash & dash
     * Makefile	      - The makefile for this project with build targets to:
       		          * Build the executable
 			  * Create distribution tarball
@@ -74,5 +68,11 @@ Research:
     * Process forking and execvp()
     * Handling signals, raising signals
     * Waiting for child processes
+    * Computing time differences using timeval structs
 
 
+Citations:
+
+    * The function used to calculate time differences for timeval structs
+      was largely inspired by the one used in the libc manual.
+      https://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
