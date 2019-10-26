@@ -22,6 +22,15 @@ int getElapsedTime(int who, simpsh_timeinfo_t ti_start, simpsh_timeinfo_t* elaps
   return 0;
 }
 
+/*
+  This function was largely taken from
+  https://www.gnu.org/software/libc/manual/html_node/Elapsed-Time.html
+  I changed the implementation in many ways.
+  1 - I return a struct containing the diff
+  2 - I am guaranteed (unless the OS messes up) that the diff is not negative
+      so I don't return that.
+  3 - Input params are different, more suited for my needs.
+*/
 struct timeval getTimeDiff(struct timeval t1, struct timeval t2){
   struct timeval diff;
   if(t1.tv_usec < t2.tv_usec) {
